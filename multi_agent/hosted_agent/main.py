@@ -26,7 +26,24 @@ from azure.identity import DefaultAzureCredential
 from investigation_workflow import build_workflow, load_test_cases_dir
 
 
+def _configure_telemetry() -> None:
+    """Disable OTEL sampling so every sub-agent span is exported.
+
+    The Azure Monitor exporter defaults to fixed-rate sampling which drops a
+    large fraction of dependency spans when 10+ sub-agents fire concurrently.
+    Setting ``OTEL_TRACES_SAMPLER=always_on`` ensures all chat completion spans
+    (and their token-usage attributes) reach App Insights.
+    """
+    os.environ.setdefault("OTEL_TRACES_SAMPLER", "always_on")
+    # Also increase the batch export limits so nothing is dropped due to
+    # queue pressure during the fan-out burst.
+    os.environ.setdefault("OTEL_BSP_MAX_QUEUE_SIZE", "4096")
+    os.environ.setdefault("OTEL_BSP_MAX_EXPORT_BATCH_SIZE", "512")
+
+
 def main() -> None:
+    _configure_telemetry()
+
     project_endpoint = (
         os.environ.get("FOUNDRY_PROJECT_ENDPOINT")
         or os.environ["AZURE_AI_PROJECT_ENDPOINT"]
@@ -36,6 +53,14 @@ def main() -> None:
         or os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
     )
     paco_model_name = os.environ.get("PACO_MODEL_DEPLOYMENT_NAME", model_name)
+
+    # When True, Foundry persists thread/session data so the portal surfaces
+    # full session details, token counts, and traces. Override with
+    # WORKFLOW_STORE=false to opt back out.
+    store_threads = os.environ.get("WORKFLOW_STORE", "true").strip().lower() in (
+        "1", "true", "yes", "on",
+    )
+    print(f"[startup] Workflow store={store_threads}")
 
     test_cases_dir = Path(__file__).parent / "test_cases"
     loaded = load_test_cases_dir(test_cases_dir)
@@ -57,7 +82,7 @@ def main() -> None:
         )
     )
 
-    components = build_workflow(risk_client, paco_client=paco_client, store=False)
+    components = build_workflow(risk_client, paco_client=paco_client, store=store_threads)
     server = ResponsesHostServer(components.workflow.as_agent())
     server.run()
 

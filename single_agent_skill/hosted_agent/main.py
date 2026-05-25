@@ -26,7 +26,15 @@ from azure.identity import DefaultAzureCredential
 from single_agent_workflow import build_agent, load_test_cases_dir
 
 
+def _configure_telemetry() -> None:
+    """Disable OTEL sampling so every LLM span is exported to App Insights."""
+    os.environ.setdefault("OTEL_TRACES_SAMPLER", "always_on")
+    os.environ.setdefault("OTEL_BSP_MAX_QUEUE_SIZE", "4096")
+    os.environ.setdefault("OTEL_BSP_MAX_EXPORT_BATCH_SIZE", "512")
+
+
 def main() -> None:
+    _configure_telemetry()
     project_endpoint = (
         os.environ.get("FOUNDRY_PROJECT_ENDPOINT")
         or os.environ["AZURE_AI_PROJECT_ENDPOINT"]
@@ -51,7 +59,12 @@ def main() -> None:
         credential=credential,
     )
 
-    agent = build_agent(client, skills_dir=skills_dir, store=False)
+    store_threads = os.environ.get("WORKFLOW_STORE", "true").strip().lower() in (
+        "1", "true", "yes", "on",
+    )
+    print(f"[startup] Workflow store={store_threads}")
+
+    agent = build_agent(client, skills_dir=skills_dir, store=store_threads)
     server = ResponsesHostServer(agent)
     server.run()
 
