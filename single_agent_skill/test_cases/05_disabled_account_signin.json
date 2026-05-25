@@ -1,0 +1,124 @@
+{
+  "name": "Disabled Account Sign-in + Impossible Travel",
+  "description": "Mike was terminated and his account disabled, but stolen refresh tokens were never revoked. An attacker reuses cached tokens to call Microsoft Graph successfully from Amsterdam at 02:00, then from Bucharest at 02:07 — non-interactive sign-ins from two cities 7 minutes apart trigger Sentinel's impossible-travel rule. Interactive sign-in attempts fail with AADSTS50057 (disabled account), confirming the token-replay nature of the access.",
+  "expected_verdict": "AccountCompromised",
+  "expected_confidence": "High",
+  "detection": {
+    "ThreatScenario": "AccountCompromise",
+    "PrimaryEntityType": "User",
+    "PrimaryEntityId": "mike.former@contoso.com",
+    "IoC_IPs": ["185.220.101.34", "185.220.101.35"],
+    "IoC_Locations": ["Amsterdam, NL", "Bucharest, RO"],
+    "IoC_Devices": [],
+    "IoC_Applications": ["Microsoft Graph", "Exchange Online"],
+    "IoC_Domains": [],
+    "DetectionTime": "2026-05-10T02:07:00Z",
+    "Severity": "High"
+  },
+  "data_sources": {
+    "signin_logs": [
+      {
+        "Timestamp": "2026-05-10T02:00:00Z",
+        "UPN": "mike.former@contoso.com",
+        "IPAddress": "185.220.101.34",
+        "Location": "Amsterdam, NL",
+        "AuthMethod": "RefreshToken",
+        "Status": "Success",
+        "AppDisplayName": "Microsoft Graph",
+        "DeviceCompliant": false,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-5001"
+      },
+      {
+        "Timestamp": "2026-05-10T02:07:00Z",
+        "UPN": "mike.former@contoso.com",
+        "IPAddress": "185.220.101.35",
+        "Location": "Bucharest, RO",
+        "AuthMethod": "RefreshToken",
+        "Status": "Success",
+        "AppDisplayName": "Exchange Online",
+        "DeviceCompliant": false,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-5002"
+      }
+    ],
+    "noninteractive_signin_logs": [
+      {
+        "Timestamp": "2026-05-10T02:01:00Z",
+        "UPN": "mike.former@contoso.com",
+        "IPAddress": "185.220.101.34",
+        "Location": "Amsterdam, NL",
+        "AppDisplayName": "Microsoft Graph",
+        "TokenIssuer": "AzureAD"
+      },
+      {
+        "Timestamp": "2026-05-10T02:09:00Z",
+        "UPN": "mike.former@contoso.com",
+        "IPAddress": "185.220.101.35",
+        "Location": "Bucharest, RO",
+        "AppDisplayName": "Exchange Online",
+        "TokenIssuer": "AzureAD"
+      }
+    ],
+    "failed_signins": [
+      {"Timestamp": "2026-05-10T02:02:00Z", "UPN": "mike.former@contoso.com", "IPAddress": "185.220.101.34", "Status": "Failure", "ErrorCode": "AADSTS50057"},
+      {"Timestamp": "2026-05-10T02:04:00Z", "UPN": "mike.former@contoso.com", "IPAddress": "185.220.101.34", "Status": "Failure", "ErrorCode": "AADSTS50057"},
+      {"Timestamp": "2026-05-10T02:11:00Z", "UPN": "mike.former@contoso.com", "IPAddress": "185.220.101.35", "Status": "Failure", "ErrorCode": "AADSTS50057"}
+    ],
+    "audit_logs": [
+      {
+        "Timestamp": "2026-04-25T18:00:00Z",
+        "UPN": "mike.former@contoso.com",
+        "Activity": "Disable account",
+        "Category": "UserManagement",
+        "ModifiedProperties": [
+          {"Name": "AccountEnabled", "OldValue": "true", "NewValue": "false"}
+        ],
+        "InitiatedBy": "hr.offboarding@contoso.com"
+      }
+    ],
+    "security_alerts": [
+      {
+        "Timestamp": "2026-05-10T02:08:00Z",
+        "AlertType": "Impossible travel activity",
+        "Severity": "High",
+        "UPN": "mike.former@contoso.com",
+        "Description": "Successful token-based access from Amsterdam (02:00) and Bucharest (02:07) within 7 minutes — physically impossible travel."
+      },
+      {
+        "Timestamp": "2026-05-10T02:12:00Z",
+        "AlertType": "Sign-in activity on disabled account",
+        "Severity": "High",
+        "UPN": "mike.former@contoso.com",
+        "Description": "Authentication attempts against a disabled account from Tor exit nodes; cached refresh tokens are still being honored."
+      }
+    ],
+    "mailbox_rules": [],
+    "ip_reputation": {
+      "185.220.101.34": {"IP": "185.220.101.34", "Reputation": "Malicious", "ISP": "Tor Exit Relay", "Country": "NL", "IsTor": true, "IsProxy": false, "IsVPN": false},
+      "185.220.101.35": {"IP": "185.220.101.35", "Reputation": "Malicious", "ISP": "Tor Exit Relay", "Country": "RO", "IsTor": true, "IsProxy": false, "IsVPN": false}
+    },
+    "entra_user": {
+      "UPN": "mike.former@contoso.com",
+      "DisplayName": "Mike Former",
+      "JobTitle": "Former Software Engineer",
+      "Department": "Engineering",
+      "AccountEnabled": false,
+      "MFARegistered": true,
+      "Roles": [],
+      "Groups": ["Engineering-Leavers"],
+      "RiskState": "atRisk",
+      "LastPasswordChange": "2025-08-01T00:00:00Z"
+    },
+    "ad_user_context": {
+      "UPN": "mike.former@contoso.com",
+      "DisplayName": "Mike Former",
+      "Department": "Engineering",
+      "Manager": "eng.manager@contoso.com",
+      "OfficeLocation": "Seattle, WA",
+      "AccountEnabled": false,
+      "LastLogon": "2026-04-25T17:30:00Z",
+      "PasswordLastSet": "2025-08-01T00:00:00Z"
+    }
+  }
+}

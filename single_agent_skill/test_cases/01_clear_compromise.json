@@ -1,0 +1,128 @@
+{
+  "name": "Clear Account Compromise",
+  "description": "Classic impossible travel + malicious IP + brute force + MFA tampering + OAuth consent + mailbox forwarding on a high-privilege user. Multiple corroborating indicators of a full account takeover.",
+  "expected_verdict": "AccountCompromised",
+  "expected_confidence": "High",
+  "detection": {
+    "ThreatScenario": "AccountCompromise",
+    "PrimaryEntityType": "User",
+    "PrimaryEntityId": "john.doe@contoso.com",
+    "IoC_IPs": ["203.0.113.42", "198.51.100.7"],
+    "IoC_Locations": ["Seattle, US", "Lagos, NG"],
+    "IoC_Devices": ["unknown-device-no-id"],
+    "IoC_Applications": ["SuspiciousApp-DataExfil"],
+    "IoC_Domains": ["attacker.com"],
+    "DetectionTime": "2025-01-15T08:50:00Z",
+    "Severity": "High"
+  },
+  "data_sources": {
+    "signin_logs": [
+      {
+        "Timestamp": "2025-01-15T08:30:00Z",
+        "UPN": "john.doe@contoso.com",
+        "IPAddress": "203.0.113.42",
+        "Location": "Seattle, US",
+        "AuthMethod": "Password+MFA",
+        "Status": "Success",
+        "AppDisplayName": "Microsoft 365",
+        "DeviceCompliant": true,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-001"
+      },
+      {
+        "Timestamp": "2025-01-15T08:47:00Z",
+        "UPN": "john.doe@contoso.com",
+        "IPAddress": "198.51.100.7",
+        "Location": "Lagos, NG",
+        "AuthMethod": "Password",
+        "Status": "Success",
+        "AppDisplayName": "Exchange Online",
+        "DeviceCompliant": false,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-002"
+      }
+    ],
+    "noninteractive_signin_logs": [
+      {
+        "Timestamp": "2025-01-15T08:50:00Z",
+        "UPN": "john.doe@contoso.com",
+        "IPAddress": "198.51.100.7",
+        "Location": "Lagos, NG",
+        "AppDisplayName": "Microsoft Graph",
+        "TokenIssuer": "AzureAD"
+      }
+    ],
+    "failed_signins": [
+      {"Timestamp": "2025-01-15T08:40:00Z", "UPN": "john.doe@contoso.com", "IPAddress": "198.51.100.7", "Status": "Failure", "ErrorCode": "50126"},
+      {"Timestamp": "2025-01-15T08:41:00Z", "UPN": "john.doe@contoso.com", "IPAddress": "198.51.100.7", "Status": "Failure", "ErrorCode": "50126"},
+      {"Timestamp": "2025-01-15T08:42:00Z", "UPN": "john.doe@contoso.com", "IPAddress": "198.51.100.7", "Status": "Failure", "ErrorCode": "50126"},
+      {"Timestamp": "2025-01-15T08:43:00Z", "UPN": "john.doe@contoso.com", "IPAddress": "198.51.100.7", "Status": "Failure", "ErrorCode": "50126"},
+      {"Timestamp": "2025-01-15T08:44:00Z", "UPN": "john.doe@contoso.com", "IPAddress": "198.51.100.7", "Status": "Failure", "ErrorCode": "50126"}
+    ],
+    "audit_logs": [
+      {
+        "Timestamp": "2025-01-15T09:00:00Z",
+        "UPN": "john.doe@contoso.com",
+        "Activity": "Update user",
+        "Category": "UserManagement",
+        "ModifiedProperties": [
+          {"Name": "StrongAuthenticationMethod", "OldValue": "PhoneAppOTP", "NewValue": "PhoneAppNotification"}
+        ],
+        "InitiatedBy": "john.doe@contoso.com"
+      },
+      {
+        "Timestamp": "2025-01-15T09:10:00Z",
+        "UPN": "john.doe@contoso.com",
+        "Activity": "Consent to application",
+        "Category": "ApplicationManagement",
+        "TargetApp": "SuspiciousApp-DataExfil",
+        "Permissions": ["Mail.Read", "Files.ReadWrite.All", "User.Read"],
+        "InitiatedBy": "john.doe@contoso.com"
+      }
+    ],
+    "security_alerts": [
+      {
+        "Timestamp": "2025-01-15T09:15:00Z",
+        "AlertType": "Suspicious inbox rule",
+        "Severity": "Medium",
+        "UPN": "john.doe@contoso.com",
+        "Description": "Inbox rule created to forward emails matching 'invoice|payment|wire' to external address."
+      }
+    ],
+    "mailbox_rules": [
+      {
+        "RuleName": "Auto-Forward Invoices",
+        "UPN": "john.doe@contoso.com",
+        "Conditions": {"SubjectContains": ["invoice", "payment", "wire transfer"]},
+        "Actions": {"ForwardTo": "attacker-drop@external-mail.com", "DeleteMessage": true},
+        "CreatedDate": "2025-01-15T09:05:00Z"
+      }
+    ],
+    "ip_reputation": {
+      "203.0.113.42": {"IP": "203.0.113.42", "Reputation": "Clean", "ISP": "Contoso Corp", "Country": "US", "IsTor": false, "IsProxy": false, "IsVPN": false},
+      "198.51.100.7": {"IP": "198.51.100.7", "Reputation": "Malicious", "ISP": "BulletproofHost Ltd", "Country": "NG", "IsTor": false, "IsProxy": true, "IsVPN": true}
+    },
+    "entra_user": {
+      "UPN": "john.doe@contoso.com",
+      "DisplayName": "John Doe",
+      "JobTitle": "Senior Finance Manager",
+      "Department": "Finance",
+      "AccountEnabled": true,
+      "MFARegistered": true,
+      "Roles": ["Global Reader", "Exchange Administrator"],
+      "Groups": ["Finance-Team", "VPN-Users", "Executive-Access"],
+      "RiskState": "atRisk",
+      "LastPasswordChange": "2024-11-20T00:00:00Z"
+    },
+    "ad_user_context": {
+      "UPN": "john.doe@contoso.com",
+      "DisplayName": "John Doe",
+      "Department": "Finance",
+      "Manager": "jane.smith@contoso.com",
+      "OfficeLocation": "Seattle, WA",
+      "AccountEnabled": true,
+      "LastLogon": "2025-01-15T08:30:00Z",
+      "PasswordLastSet": "2024-11-20T00:00:00Z"
+    }
+  }
+}

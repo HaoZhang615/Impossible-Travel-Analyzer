@@ -1,0 +1,77 @@
+{
+  "name": "Benign Business Travel",
+  "description": "Sales director travels NYC → London for a customer meeting. Sign-ins ~8 hours apart (compatible with a transatlantic flight), full MFA on both ends, clean corporate IPs, compliant devices, no audit changes, no alerts. The Sentinel impossible-travel rule fires due to the geographic distance, but the surrounding context disproves compromise.",
+  "expected_verdict": "BenignAnomaly",
+  "expected_confidence": "High",
+  "detection": {
+    "ThreatScenario": "AccountCompromise",
+    "PrimaryEntityType": "User",
+    "PrimaryEntityId": "sarah.lee@contoso.com",
+    "IoC_IPs": ["192.0.2.10", "192.0.2.55"],
+    "IoC_Locations": ["New York, US", "London, UK"],
+    "IoC_Devices": ["LAPTOP-SARAH-01"],
+    "IoC_Applications": ["Microsoft 365"],
+    "IoC_Domains": [],
+    "DetectionTime": "2026-03-10T17:05:00Z",
+    "Severity": "Medium"
+  },
+  "data_sources": {
+    "signin_logs": [
+      {
+        "Timestamp": "2026-03-10T08:55:00Z",
+        "UPN": "sarah.lee@contoso.com",
+        "IPAddress": "192.0.2.10",
+        "Location": "New York, US",
+        "AuthMethod": "Password+MFA",
+        "Status": "Success",
+        "AppDisplayName": "Microsoft 365",
+        "DeviceCompliant": true,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-1001"
+      },
+      {
+        "Timestamp": "2026-03-10T17:05:00Z",
+        "UPN": "sarah.lee@contoso.com",
+        "IPAddress": "192.0.2.55",
+        "Location": "London, UK",
+        "AuthMethod": "Password+MFA",
+        "Status": "Success",
+        "AppDisplayName": "Microsoft 365",
+        "DeviceCompliant": true,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-1001"
+      }
+    ],
+    "noninteractive_signin_logs": [],
+    "failed_signins": [],
+    "audit_logs": [],
+    "security_alerts": [],
+    "mailbox_rules": [],
+    "ip_reputation": {
+      "192.0.2.10": {"IP": "192.0.2.10", "Reputation": "Clean", "ISP": "Contoso Corp Guest WiFi", "Country": "US", "IsTor": false, "IsProxy": false, "IsVPN": false},
+      "192.0.2.55": {"IP": "192.0.2.55", "Reputation": "Clean", "ISP": "British Telecom Business", "Country": "GB", "IsTor": false, "IsProxy": false, "IsVPN": false}
+    },
+    "entra_user": {
+      "UPN": "sarah.lee@contoso.com",
+      "DisplayName": "Sarah Lee",
+      "JobTitle": "Sales Director, EMEA",
+      "Department": "Sales",
+      "AccountEnabled": true,
+      "MFARegistered": true,
+      "Roles": [],
+      "Groups": ["Sales-Team", "Frequent-Travelers"],
+      "RiskState": "none",
+      "LastPasswordChange": "2026-02-01T00:00:00Z"
+    },
+    "ad_user_context": {
+      "UPN": "sarah.lee@contoso.com",
+      "DisplayName": "Sarah Lee",
+      "Department": "Sales",
+      "Manager": "vp.sales@contoso.com",
+      "OfficeLocation": "New York, NY",
+      "AccountEnabled": true,
+      "LastLogon": "2026-03-10T08:55:00Z",
+      "PasswordLastSet": "2026-02-01T00:00:00Z"
+    }
+  }
+}

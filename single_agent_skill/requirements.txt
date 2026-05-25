@@ -1,0 +1,9 @@
+agent-framework-core
+agent-framework-foundry
+agent-framework-foundry-hosting
+agent-framework-devui
+azure-ai-projects>=2.1.0
+azure-identity
+pydantic>=2.0
+python-dotenv
+ipykernel

@@ -1,0 +1,120 @@
+{
+  "name": "MFA Fatigue Attack",
+  "description": "Attacker obtained a stolen password and is spamming MFA push notifications from a residential proxy in Eastern Europe while the user is in their normal Seattle location. After several rejections the user accepts one push. The attacker then registers a new MFA method to maintain persistence and accesses Exchange and SharePoint non-interactively.",
+  "expected_verdict": "AccountCompromised",
+  "expected_confidence": "High",
+  "detection": {
+    "ThreatScenario": "AccountCompromise",
+    "PrimaryEntityType": "User",
+    "PrimaryEntityId": "bob.chen@contoso.com",
+    "IoC_IPs": ["198.51.100.220"],
+    "IoC_Locations": ["Seattle, US", "Sofia, BG"],
+    "IoC_Devices": ["unknown-device"],
+    "IoC_Applications": ["Microsoft Graph", "SharePoint Online"],
+    "IoC_Domains": [],
+    "DetectionTime": "2026-04-02T03:25:00Z",
+    "Severity": "High"
+  },
+  "data_sources": {
+    "signin_logs": [
+      {
+        "Timestamp": "2026-04-01T17:10:00Z",
+        "UPN": "bob.chen@contoso.com",
+        "IPAddress": "203.0.113.88",
+        "Location": "Seattle, US",
+        "AuthMethod": "Password+MFA",
+        "Status": "Success",
+        "AppDisplayName": "Microsoft 365",
+        "DeviceCompliant": true,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-2001"
+      },
+      {
+        "Timestamp": "2026-04-02T03:25:00Z",
+        "UPN": "bob.chen@contoso.com",
+        "IPAddress": "198.51.100.220",
+        "Location": "Sofia, BG",
+        "AuthMethod": "Password+MFA",
+        "Status": "Success",
+        "AppDisplayName": "Microsoft 365",
+        "DeviceCompliant": false,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-2002"
+      }
+    ],
+    "noninteractive_signin_logs": [
+      {
+        "Timestamp": "2026-04-02T03:31:00Z",
+        "UPN": "bob.chen@contoso.com",
+        "IPAddress": "198.51.100.220",
+        "Location": "Sofia, BG",
+        "AppDisplayName": "Microsoft Graph",
+        "TokenIssuer": "AzureAD"
+      },
+      {
+        "Timestamp": "2026-04-02T03:42:00Z",
+        "UPN": "bob.chen@contoso.com",
+        "IPAddress": "198.51.100.220",
+        "Location": "Sofia, BG",
+        "AppDisplayName": "SharePoint Online",
+        "TokenIssuer": "AzureAD"
+      }
+    ],
+    "failed_signins": [
+      {"Timestamp": "2026-04-02T03:10:00Z", "UPN": "bob.chen@contoso.com", "IPAddress": "198.51.100.220", "Status": "Failure", "ErrorCode": "500121"},
+      {"Timestamp": "2026-04-02T03:12:00Z", "UPN": "bob.chen@contoso.com", "IPAddress": "198.51.100.220", "Status": "Failure", "ErrorCode": "500121"},
+      {"Timestamp": "2026-04-02T03:14:00Z", "UPN": "bob.chen@contoso.com", "IPAddress": "198.51.100.220", "Status": "Failure", "ErrorCode": "500121"},
+      {"Timestamp": "2026-04-02T03:17:00Z", "UPN": "bob.chen@contoso.com", "IPAddress": "198.51.100.220", "Status": "Failure", "ErrorCode": "500121"},
+      {"Timestamp": "2026-04-02T03:20:00Z", "UPN": "bob.chen@contoso.com", "IPAddress": "198.51.100.220", "Status": "Failure", "ErrorCode": "500121"},
+      {"Timestamp": "2026-04-02T03:22:00Z", "UPN": "bob.chen@contoso.com", "IPAddress": "198.51.100.220", "Status": "Failure", "ErrorCode": "500121"}
+    ],
+    "audit_logs": [
+      {
+        "Timestamp": "2026-04-02T03:34:00Z",
+        "UPN": "bob.chen@contoso.com",
+        "Activity": "User registered security info",
+        "Category": "UserManagement",
+        "ModifiedProperties": [
+          {"Name": "StrongAuthenticationMethod", "OldValue": "PhoneAppNotification", "NewValue": "PhoneAppOTP+SecondaryPhone"}
+        ],
+        "InitiatedBy": "bob.chen@contoso.com"
+      }
+    ],
+    "security_alerts": [
+      {
+        "Timestamp": "2026-04-02T03:23:00Z",
+        "AlertType": "Multiple MFA prompts denied then accepted",
+        "Severity": "High",
+        "UPN": "bob.chen@contoso.com",
+        "Description": "Six rapid MFA push prompts from a foreign IP within 12 minutes followed by an approval — pattern consistent with MFA fatigue."
+      }
+    ],
+    "mailbox_rules": [],
+    "ip_reputation": {
+      "203.0.113.88": {"IP": "203.0.113.88", "Reputation": "Clean", "ISP": "Comcast Cable", "Country": "US", "IsTor": false, "IsProxy": false, "IsVPN": false},
+      "198.51.100.220": {"IP": "198.51.100.220", "Reputation": "Suspicious", "ISP": "ResidentialProxy.io", "Country": "BG", "IsTor": false, "IsProxy": true, "IsVPN": false}
+    },
+    "entra_user": {
+      "UPN": "bob.chen@contoso.com",
+      "DisplayName": "Bob Chen",
+      "JobTitle": "IT Operations Engineer",
+      "Department": "IT",
+      "AccountEnabled": true,
+      "MFARegistered": true,
+      "Roles": ["Helpdesk Administrator"],
+      "Groups": ["IT-Operations", "VPN-Users"],
+      "RiskState": "atRisk",
+      "LastPasswordChange": "2025-10-15T00:00:00Z"
+    },
+    "ad_user_context": {
+      "UPN": "bob.chen@contoso.com",
+      "DisplayName": "Bob Chen",
+      "Department": "IT",
+      "Manager": "it.director@contoso.com",
+      "OfficeLocation": "Seattle, WA",
+      "AccountEnabled": true,
+      "LastLogon": "2026-04-01T17:10:00Z",
+      "PasswordLastSet": "2025-10-15T00:00:00Z"
+    }
+  }
+}
