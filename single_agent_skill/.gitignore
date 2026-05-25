@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.ipynb_checkpoints/
+workshop_config.json
+eval_results/*.jsonl
+hosted_agent/test_cases/
+hosted_agent/skills/
+hosted_agent/tools.py
+hosted_agent/single_agent_workflow.py
+hosted_agent/subprocess_script_runner.py
