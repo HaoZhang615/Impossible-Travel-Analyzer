@@ -1,0 +1,17 @@
+[project]
+name = "impossible-travel-analyzer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "agent-framework-core>=1.5.0",
+    "agent-framework-devui>=1.0.0b260519",
+    "agent-framework-foundry>=1.5.0",
+    "agent-framework-foundry-hosting>=1.0.0a260519",
+    "azure-ai-projects>=2.1.0",
+    "azure-identity>=1.25.3",
+    "ipykernel>=7.2.0",
+    "pydantic>=2.0",
+    "python-dotenv>=1.2.2",
+]

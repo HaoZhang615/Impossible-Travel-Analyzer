@@ -1,0 +1,134 @@
+{
+  "name": "OAuth Consent Phishing + Impossible Travel",
+  "description": "Alice fell for a phishing email that harvested both her password and an OAuth consent for the malicious 'HRDocs-Helper' app. Eight minutes after her legitimate Seattle sign-in, the attacker signs in interactively from Frankfurt — Sentinel's impossible-travel rule fires. The OAuth consent (Mail.ReadWrite + Files.ReadWrite.All + offline_access) is the dominant corroborating signal and provides persistent access independent of the password.",
+  "expected_verdict": "AccountCompromised",
+  "expected_confidence": "High",
+  "detection": {
+    "ThreatScenario": "AccountCompromise",
+    "PrimaryEntityType": "User",
+    "PrimaryEntityId": "alice.morgan@contoso.com",
+    "IoC_IPs": ["203.0.113.150", "45.77.123.9"],
+    "IoC_Locations": ["Seattle, US", "Frankfurt, DE"],
+    "IoC_Devices": ["LAPTOP-ALICE-04", "unknown-device"],
+    "IoC_Applications": ["HRDocs-Helper"],
+    "IoC_Domains": ["hrdocs-helper.app"],
+    "DetectionTime": "2026-02-18T14:38:00Z",
+    "Severity": "High"
+  },
+  "data_sources": {
+    "signin_logs": [
+      {
+        "Timestamp": "2026-02-18T08:05:00Z",
+        "UPN": "alice.morgan@contoso.com",
+        "IPAddress": "203.0.113.150",
+        "Location": "Seattle, US",
+        "AuthMethod": "Password+MFA",
+        "Status": "Success",
+        "AppDisplayName": "Microsoft 365",
+        "DeviceCompliant": true,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-3001"
+      },
+      {
+        "Timestamp": "2026-02-18T14:30:00Z",
+        "UPN": "alice.morgan@contoso.com",
+        "IPAddress": "203.0.113.150",
+        "Location": "Seattle, US",
+        "AuthMethod": "Password+MFA",
+        "Status": "Success",
+        "AppDisplayName": "HRDocs-Helper",
+        "DeviceCompliant": true,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-3002"
+      },
+      {
+        "Timestamp": "2026-02-18T14:38:00Z",
+        "UPN": "alice.morgan@contoso.com",
+        "IPAddress": "45.77.123.9",
+        "Location": "Frankfurt, DE",
+        "AuthMethod": "Password",
+        "Status": "Success",
+        "AppDisplayName": "Microsoft 365",
+        "DeviceCompliant": false,
+        "TokenIssuer": "AzureAD",
+        "SessionId": "sess-3003"
+      }
+    ],
+    "noninteractive_signin_logs": [
+      {
+        "Timestamp": "2026-02-18T14:42:00Z",
+        "UPN": "alice.morgan@contoso.com",
+        "IPAddress": "45.77.123.9",
+        "Location": "Frankfurt, DE",
+        "AppDisplayName": "HRDocs-Helper",
+        "TokenIssuer": "AzureAD"
+      },
+      {
+        "Timestamp": "2026-02-18T14:55:00Z",
+        "UPN": "alice.morgan@contoso.com",
+        "IPAddress": "45.77.123.9",
+        "Location": "Frankfurt, DE",
+        "AppDisplayName": "Microsoft Graph",
+        "TokenIssuer": "AzureAD"
+      }
+    ],
+    "failed_signins": [
+      {"Timestamp": "2026-02-18T14:36:00Z", "UPN": "alice.morgan@contoso.com", "IPAddress": "45.77.123.9", "Status": "Failure", "ErrorCode": "50126"},
+      {"Timestamp": "2026-02-18T14:37:00Z", "UPN": "alice.morgan@contoso.com", "IPAddress": "45.77.123.9", "Status": "Failure", "ErrorCode": "50074"}
+    ],
+    "audit_logs": [
+      {
+        "Timestamp": "2026-02-18T14:32:00Z",
+        "UPN": "alice.morgan@contoso.com",
+        "Activity": "Consent to application",
+        "Category": "ApplicationManagement",
+        "TargetApp": "HRDocs-Helper",
+        "Permissions": ["Mail.ReadWrite", "Files.ReadWrite.All", "offline_access", "User.Read"],
+        "InitiatedBy": "alice.morgan@contoso.com"
+      }
+    ],
+    "security_alerts": [
+      {
+        "Timestamp": "2026-02-18T14:39:00Z",
+        "AlertType": "Atypical travel",
+        "Severity": "High",
+        "UPN": "alice.morgan@contoso.com",
+        "Description": "Successful sign-in from Frankfurt, DE only 8 minutes after a Seattle, US sign-in by the same user."
+      },
+      {
+        "Timestamp": "2026-02-18T15:02:00Z",
+        "AlertType": "Suspicious OAuth application consent",
+        "Severity": "High",
+        "UPN": "alice.morgan@contoso.com",
+        "Description": "Newly-registered third-party app 'HRDocs-Helper' requested high-privilege Graph permissions and is now reading mail from a non-corporate IP."
+      }
+    ],
+    "mailbox_rules": [],
+    "ip_reputation": {
+      "203.0.113.150": {"IP": "203.0.113.150", "Reputation": "Clean", "ISP": "Contoso Corp", "Country": "US", "IsTor": false, "IsProxy": false, "IsVPN": false},
+      "45.77.123.9": {"IP": "45.77.123.9", "Reputation": "Suspicious", "ISP": "Vultr Hosting", "Country": "DE", "IsTor": false, "IsProxy": false, "IsVPN": false}
+    },
+    "entra_user": {
+      "UPN": "alice.morgan@contoso.com",
+      "DisplayName": "Alice Morgan",
+      "JobTitle": "HR Specialist",
+      "Department": "Human Resources",
+      "AccountEnabled": true,
+      "MFARegistered": true,
+      "Roles": [],
+      "Groups": ["HR-Team", "All-Employees"],
+      "RiskState": "atRisk",
+      "LastPasswordChange": "2025-12-05T00:00:00Z"
+    },
+    "ad_user_context": {
+      "UPN": "alice.morgan@contoso.com",
+      "DisplayName": "Alice Morgan",
+      "Department": "Human Resources",
+      "Manager": "hr.director@contoso.com",
+      "OfficeLocation": "Seattle, WA",
+      "AccountEnabled": true,
+      "LastLogon": "2026-02-18T14:38:00Z",
+      "PasswordLastSet": "2025-12-05T00:00:00Z"
+    }
+  }
+}

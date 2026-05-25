@@ -1,0 +1,7 @@
+{
+  "RESOURCE_GROUP": "rg-foundry-iac-ops",
+  "ACCOUNT_NAME": "fndryiac2ttkx3",
+  "PROJECT_NAME": "iac-ops-demo",
+  "MODEL_DEPLOYMENT_NAME": "gpt-4.1-mini",
+  "PROJECT_ENDPOINT": "https://fndryiac2ttkx3.services.ai.azure.com/api/projects/iac-ops-demo"
+}
