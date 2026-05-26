@@ -1,0 +1,21 @@
+alert_id,alert_type,severity,user_upn,source_ip,source_location,dest_ip,dest_location,timestamp,status,mitre_tactic,time_to_acknowledge_min,time_to_resolve_min,verdict
+ALT-001,Impossible Travel,High,john.doe@contoso.com,203.0.113.42,Seattle US,198.51.100.7,Lagos NG,2025-01-15T08:50:00Z,Closed,Initial Access,8,45,AccountCompromised
+ALT-002,Impossible Travel,Medium,sarah.lee@contoso.com,192.0.2.10,New York US,192.0.2.55,London UK,2025-02-10T17:05:00Z,Closed,Initial Access,12,30,BenignAnomaly
+ALT-003,Brute Force,Medium,mike.chen@contoso.com,198.51.100.99,Moscow RU,,,2025-02-18T14:20:00Z,Closed,Credential Access,5,60,AccountCompromised
+ALT-004,MFA Fatigue,High,anna.kumar@contoso.com,203.0.113.88,Sao Paulo BR,,,2025-03-01T22:15:00Z,Closed,Credential Access,3,90,LikelyCompromised
+ALT-005,OAuth Consent Phishing,High,tom.wilson@contoso.com,198.51.100.22,Berlin DE,,,2025-03-05T10:30:00Z,Closed,Credential Access,10,120,AccountCompromised
+ALT-006,Suspicious Inbox Rule,Medium,lisa.park@contoso.com,192.0.2.77,Chicago US,,,2025-03-10T06:45:00Z,Closed,Collection,15,55,Suspicious
+ALT-007,Impossible Travel,High,bob.garcia@contoso.com,10.0.0.5,Denver US,45.33.32.156,Beijing CN,2025-03-12T03:10:00Z,Closed,Initial Access,4,35,AccountCompromised
+ALT-008,Disabled Account Sign-In,Critical,ex.employee@contoso.com,198.51.100.200,Bucharest RO,,,2025-03-15T01:00:00Z,Closed,Persistence,2,15,AccountCompromised
+ALT-009,Token Replay,High,jane.smith@contoso.com,192.0.2.100,Austin US,198.51.100.150,Lagos NG,2025-03-18T11:30:00Z,Closed,Credential Access,7,50,LikelyCompromised
+ALT-010,Risky Sign-In,Medium,david.brown@contoso.com,192.0.2.200,London UK,,,2025-03-20T09:00:00Z,Closed,Initial Access,20,40,BenignAnomaly
+ALT-011,Impossible Travel,High,emma.jones@contoso.com,10.0.0.15,San Francisco US,45.77.88.99,Mumbai IN,2025-04-01T05:20:00Z,Open,Initial Access,6,,
+ALT-012,Brute Force,Medium,carlos.diaz@contoso.com,198.51.100.33,Kyiv UA,,,2025-04-02T18:40:00Z,Closed,Credential Access,9,70,AccountCompromised
+ALT-013,MFA Fatigue,High,nina.patel@contoso.com,203.0.113.55,Jakarta ID,,,2025-04-05T23:55:00Z,Closed,Credential Access,4,85,AccountCompromised
+ALT-014,Impossible Travel,Medium,frank.white@contoso.com,192.0.2.30,Toronto CA,192.0.2.31,Montreal CA,2025-04-08T12:00:00Z,Closed,Initial Access,25,20,BenignAnomaly
+ALT-015,OAuth Consent Phishing,High,grace.kim@contoso.com,198.51.100.44,Amsterdam NL,,,2025-04-10T07:15:00Z,Closed,Credential Access,8,110,AccountCompromised
+ALT-016,Suspicious Inbox Rule,Medium,henry.zhao@contoso.com,192.0.2.88,Seattle US,,,2025-04-12T14:30:00Z,Closed,Collection,18,45,BenignAnomaly
+ALT-017,Impossible Travel,High,irene.fox@contoso.com,10.0.0.25,Miami US,198.51.100.77,Minsk BY,2025-04-15T02:45:00Z,Closed,Initial Access,5,55,AccountCompromised
+ALT-018,Disabled Account Sign-In,Critical,old.contractor@contoso.com,45.33.32.200,Pyongyang KP,,,2025-04-18T04:00:00Z,Closed,Persistence,1,10,AccountCompromised
+ALT-019,Token Replay,High,james.taylor@contoso.com,192.0.2.150,Boston US,203.0.113.99,Nairobi KE,2025-04-20T16:20:00Z,Closed,Credential Access,6,65,LikelyCompromised
+ALT-020,Risky Sign-In,Medium,karen.ng@contoso.com,192.0.2.250,Singapore SG,,,2025-04-22T08:10:00Z,Closed,Initial Access,22,35,BenignAnomaly

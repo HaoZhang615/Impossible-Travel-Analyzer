@@ -1,15 +1,31 @@
 # Impossible Travel Analyzer
 
-A demo repository that compares two ways to investigate Impossible Travel detections with the Microsoft Agent Framework and Microsoft Foundry.
+A demo repository that teaches Microsoft Foundry agent development and compares two ways to investigate Impossible Travel detections with the Microsoft Agent Framework and Microsoft Foundry.
 
-The repo contains two implementations of the same SOC workflow:
+The repo contains three sections:
 
+- `foundry_agent_basics/`: **start here** — progressive notebooks that teach core Foundry agent concepts (tools, prompts, evaluation, orchestration) using SOC scenarios
 - `multi_agent/`: fan-out and fan-in orchestration with 10 specialized risk-analysis agents and deterministic aggregation
 - `single_agent_skill/`: a single agent that uses a file-based skill package with domain guidance and helper scripts
 
-Both implementations use the same five synthetic detection scenarios and return a structured `InvestigationVerdict`.
+> **Recommended path:** If you are new to the Microsoft Agent Framework or Microsoft Foundry, work through `foundry_agent_basics/` first. It covers the building blocks (agents, function calling, prompt engineering, evaluation, and multi-agent orchestration) that the two investigation implementations build on.
 
-## Approaches
+The `multi_agent/` and `single_agent_skill/` folders implement the same SOC workflow against five synthetic detection scenarios and return a structured `InvestigationVerdict`.
+
+## Sections
+
+### Foundry Agent Basics (`foundry_agent_basics/`)
+
+Progressive notebooks that teach Microsoft Foundry agent development using SOC scenarios. Adapted from the [MT-Foundry-Workshop](https://github.com/HaoZhang615/MT-Foundry-Workshop) with all examples rewritten for cybersecurity / SOC use cases.
+
+| Notebook | Duration | Topics |
+|----------|----------|--------|
+| `01-first-agent.ipynb` | ~8 min | First SOC Foundry agent, MCP grounding with Microsoft Learn, multi-turn conversations |
+| `02-tools.ipynb` | ~10 min | Function calling (IP reputation), web search (threat intel), file search (SOC playbooks), code interpreter (alert analytics) |
+| `03-prompts-eval.ipynb` | ~7 min | Basic vs. engineered prompts for alert triage, structured JSON verdicts, few-shot SOC advisor, multi-step investigation, evaluation |
+| `04-orchestration.ipynb` | ~15 min | Sequential (triage pipeline), concurrent (parallel risk assessment), handoff (alert routing), group chat (SOC war room), custom QA workflow |
+
+### Investigation Approaches
 
 | Topic | `multi_agent/` | `single_agent_skill/` |
 |---|---|---|
@@ -26,6 +42,14 @@ Both implementations use the same five synthetic detection scenarios and return 
 .
 ├── README.md
 ├── workshop_config.json
+├── foundry_agent_basics/
+│   ├── 01-first-agent.ipynb
+│   ├── 02-tools.ipynb
+│   ├── 03-prompts-eval.ipynb
+│   ├── 04-orchestration.ipynb
+│   ├── requirements.txt
+│   ├── sample_data/
+│   └── README.md
 ├── multi_agent/
 │   ├── 00-setup.ipynb
 │   ├── 01-investigation.ipynb
@@ -120,7 +144,15 @@ The shared config file in the repo root contains:
 
 ## How To Run
 
-Choose one implementation folder and run the notebooks in order:
+### 1. Foundry Agent Basics (recommended first)
+
+1. Run `00-setup.ipynb` from either `multi_agent/` or `single_agent_skill/` to provision Azure resources and create `workshop_config.json`.
+2. `cd foundry_agent_basics && pip install -r requirements.txt`
+3. Work through the notebooks in order: `01` → `02` → `03` → `04`.
+
+### 2. Investigation implementations
+
+Choose one implementation folder (multi_agent or single_agent_skill) and run the notebooks in order:
 
 1. `00-setup.ipynb`
 2. `01-investigation.ipynb`
